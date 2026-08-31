@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="page_title">Stepford County Railway — Streckennetz &amp; Planer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">&#9670;</span>
+      <div class="brand-text">
+        <span class="brand-name">Stepford County Railway</span>
+        <span class="brand-sub" data-i18n="brand_sub">Transport for Stepford &nbsp;·&nbsp; SCR-Streckendatenbank</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <nav class="site-nav">
+        <a href="#netz" data-i18n="nav_netz">Streckennetz</a>
+        <a href="#planer" data-i18n="nav_planer">Streckenplaner</a>
+      </nav>
+      <div class="lang-switch" id="langSwitch" role="group" aria-label="Language / Sprache">
+        <button type="button" class="lang-btn" data-lang="de">DE</button>
+        <button type="button" class="lang-btn" data-lang="en">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <p class="eyebrow" data-i18n="eyebrow">Fahrplanamt SCR</p>
+      <h1 class="flap-title" id="heroTitle" data-i18n="hero_title">FÜNF BETREIBER. EIN NETZWERK.</h1>
+      <p class="hero-copy" data-i18n="hero_copy">Alle 106 aktiven Strecken von Stepford Connect, Metro, Waterline, AirLink und Stepford Express an einem Ort — inklusive Fahrzeit und Fahrzeugbeschränkung. Unten kannst du das Netz nach Betreiber filtern und dir per Domino-Prinzip eine durchgehende Fahrt zusammenstellen lassen: Der Endbahnhof jeder Strecke ist der Startbahnhof der nächsten.</p>
+
+      <div class="info-board" id="infoBoard" aria-label="Netzwerk auf einen Blick">
+        <div class="info-cell">
+          <span class="info-value mono" id="statStations">–</span>
+          <span class="info-label" data-i18n="stat_stations">Bahnhöfe</span>
+        </div>
+        <div class="info-divider" aria-hidden="true"></div>
+        <div class="info-cell">
+          <span class="info-value mono" id="statRoutes">–</span>
+          <span class="info-label" data-i18n="stat_routes">Strecken</span>
+        </div>
+        <div class="info-divider" aria-hidden="true"></div>
+        <div class="info-cell">
+          <span class="info-value mono" id="statTrains">–</span>
+          <span class="info-label" data-i18n="stat_operators">Betreiber</span>
+        </div>
+        <div class="info-divider" aria-hidden="true"></div>
+        <div class="info-cell">
+          <span class="info-value mono" id="statInterchanges">–</span>
+          <span class="info-label" data-i18n="stat_interchanges">Umsteigebahnhöfe</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel-section" id="netz">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 data-i18n="netz_title">Streckennetz</h2>
+        <p data-i18n="netz_desc">Das vollständige Verzeichnis aller aktiven SCR-Routen. Spalten sind sortierbar, über die Betreiber-Schalter filterst du nach Zugkompatibilität, und über das Suchfeld nach Bahnhof oder Routencode. Bahnhofsnamen mit <span class="interchange-hint" data-i18n="netz_desc_hint">Punkt-Markierung</span> sind Umsteigebahnhöfe zwischen mehreren Betreibern — anklicken zeigt alle dortigen Strecken.</p>
+      </div>
+
+      <div class="legend" id="operatorLegend" aria-label="Betreiber-Filter"></div>
+
+      <div class="table-controls">
+        <input type="search" id="routeSearch" class="search-input" data-i18n-placeholder="search_placeholder" placeholder="Bahnhof oder Routencode suchen …" aria-label="Strecken durchsuchen">
+        <button type="button" class="btn btn-ghost" id="exportCsvBtn" data-i18n="export_csv">&#8681; Als CSV exportieren</button>
+      </div>
+
+      <div class="table-scroll">
+        <table class="timetable" id="routeTable">
+          <thead>
+            <tr>
+              <th data-sort="code" data-i18n="th_code">Code</th>
+              <th data-sort="operator" data-i18n="th_operator">Betreiber</th>
+              <th data-sort="from" data-i18n="th_route">Strecke</th>
+              <th data-sort="stops" class="align-right" data-i18n="th_stops">Stops</th>
+              <th data-sort="duration" class="align-right" data-i18n="th_duration">Dauer</th>
+              <th data-sort="restriction" data-i18n="th_restriction">Einschränkung</th>
+            </tr>
+          </thead>
+          <tbody id="routeTableBody">
+            <tr><td colspan="6" class="loading-row" data-i18n="loading_routes">Lade Streckendaten aus der Datenbank …</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="station-detail" id="stationDetail" hidden></div>
+
+      <div class="net-stats" id="netStats" aria-label="Netz-Statistik"></div>
+    </div>
+  </section>
+
+  <section class="panel-section alt" id="planer">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 data-i18n="planer_title">Streckenplaner</h2>
+        <p data-i18n="planer_desc">Wähle, wie viele Strecken die Schicht haben soll, und ob es ein bestimmter Betreiber sein soll. Du bekommst danach eine komplette Schicht vorgeschlagen — mit Haken übernimmst du sie, mit Kreuz schlage ich eine neue vor. Bei Annahme wird die Schicht als Liste angezeigt: Mit „Nächste Strecke" schließt du eine Strecke ab und bekommst die nächste, bis am Ende „Ende der Schicht" erscheint.</p>
+      </div>
+
+      <form class="planner-form" id="plannerForm">
+        <div class="field">
+          <label for="chainOperator" data-i18n="field_chain_operator">Betreiber der Schicht</label>
+          <select id="chainOperator" name="chainOperator">
+            <option value="" data-i18n="option_random_operator">Zufällig (ein Betreiber)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="routeCount" data-i18n="field_route_count">Anzahl Strecken</label>
+          <input type="number" id="routeCount" name="routeCount" min="2" max="30" value="6" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="startStation" data-i18n="field_start_station">Startbahnhof</label>
+          <select id="startStation" name="startStation">
+            <option value="" data-i18n="option_random_station">Zufällig</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" id="planBtn" data-i18n="plan_btn">Schicht vorschlagen</button>
+        <button type="button" class="btn btn-ghost" id="surpriseBtn" data-i18n="surprise_btn" data-i18n-title="surprise_btn_title" title="Betreiber, Länge und Start komplett zufällig würfeln">&#127922; Überraschungs-Schicht</button>
+      </form>
+
+      <p class="form-note" data-i18n="form_note">Domino-Regel: Endbahnhof der Strecke <em>n</em> = Startbahnhof der Strecke <em>n+1</em>. Jede Strecke wird höchstens einmal verwendet und die ganze Schicht bleibt beim gleichen Betreiber.</p>
+
+      <div class="planner-result" id="plannerResult" aria-live="polite"></div>
+
+      <div class="shift-history" id="shiftHistorySection">
+        <div class="shift-history-head">
+          <h3 data-i18n="shift_history_title">Schicht-Verlauf</h3>
+          <button type="button" class="btn btn-ghost" id="clearHistoryBtn" data-i18n="clear_history">Verlauf löschen</button>
+        </div>
+        <div class="shift-history-total" id="shiftHistoryTotal"></div>
+        <div class="shift-history-list" id="shiftHistoryList"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span data-i18n="footer_line1">Stepford County Railway — Streckendaten lokal in IndexedDB gespeichert.</span>
+    <span class="footer-dim" data-i18n="footer_line2">Inoffizielles Fan-Tool, basierend auf öffentlichen SCR-Netzdaten (Version 2.3).</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
