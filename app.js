@@ -404,9 +404,10 @@ function applyStaticTranslations() {
   });
   document.title = t("page_title");
 
-  document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.lang === currentLang);
-  });
+  const langSelect = document.getElementById("langSwitch");
+  if (langSelect) {
+    langSelect.value = currentLang;
+  }
 }
 
 async function setLanguage(lang) {
