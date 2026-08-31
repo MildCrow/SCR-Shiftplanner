@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-i18n="page_title">Stepford County Railway — Streckennetz &amp; Planer</title>
+<title>Stepford County Railway — Streckennetz &amp; Planer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,16 +20,17 @@
         <span class="brand-sub" data-i18n="brand_sub">Transport for Stepford &nbsp;·&nbsp; SCR-Streckendatenbank</span>
       </div>
     </div>
-    <div class="header-right">
-      <nav class="site-nav">
-        <a href="#netz" data-i18n="nav_netz">Streckennetz</a>
-        <a href="#planer" data-i18n="nav_planer">Streckenplaner</a>
-      </nav>
-      <div class="lang-switch" id="langSwitch" role="group" aria-label="Language / Sprache">
-        <button type="button" class="lang-btn" data-lang="de">DE</button>
-        <button type="button" class="lang-btn" data-lang="en">EN</button>
-      </div>
-    </div>
+    <nav class="site-nav">
+      <a href="#netz" data-i18n="nav_netz">Streckennetz</a>
+      <a href="#planer" data-i18n="nav_planer">Streckenplaner</a>
+      <label class="language-select-wrap" for="langSwitch">
+        <span class="sr-only">Sprache</span>
+        <select id="langSwitch" class="language-select" aria-label="Sprache auswählen">
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+      </label>
+    </nav>
   </div>
 </header>
 
@@ -38,10 +39,10 @@
   <section class="hero">
     <div class="wrap hero-inner">
       <p class="eyebrow" data-i18n="eyebrow">Fahrplanamt SCR</p>
-      <h1 class="flap-title" id="heroTitle" data-i18n="hero_title">FÜNF BETREIBER. EIN NETZWERK.</h1>
+      <h1 class="flap-title" id="heroTitle" data-text="FÜNF BETREIBER. EIN NETZWERK.">FÜNF BETREIBER. EIN NETZWERK.</h1>
       <p class="hero-copy" data-i18n="hero_copy">Alle 106 aktiven Strecken von Stepford Connect, Metro, Waterline, AirLink und Stepford Express an einem Ort — inklusive Fahrzeit und Fahrzeugbeschränkung. Unten kannst du das Netz nach Betreiber filtern und dir per Domino-Prinzip eine durchgehende Fahrt zusammenstellen lassen: Der Endbahnhof jeder Strecke ist der Startbahnhof der nächsten.</p>
 
-      <div class="info-board" id="infoBoard" aria-label="Netzwerk auf einen Blick">
+      <div class="info-board" id="infoBoard" aria-label="Netzwerk auf einen Blick" data-i18n-aria-label="network_overview">
         <div class="info-cell">
           <span class="info-value mono" id="statStations">–</span>
           <span class="info-label" data-i18n="stat_stations">Bahnhöfe</span>
@@ -69,13 +70,13 @@
     <div class="wrap">
       <div class="section-head">
         <h2 data-i18n="netz_title">Streckennetz</h2>
-        <p data-i18n="netz_desc">Das vollständige Verzeichnis aller aktiven SCR-Routen. Spalten sind sortierbar, über die Betreiber-Schalter filterst du nach Zugkompatibilität, und über das Suchfeld nach Bahnhof oder Routencode. Bahnhofsnamen mit <span class="interchange-hint" data-i18n="netz_desc_hint">Punkt-Markierung</span> sind Umsteigebahnhöfe zwischen mehreren Betreibern — anklicken zeigt alle dortigen Strecken.</p>
+        <p data-i18n="netz_desc">Das vollständige Verzeichnis aller aktiven SCR-Routen. Spalten sind sortierbar, über die Betreiber-Schalter filterst du nach Zugkompatibilität, und über das Suchfeld nach Bahnhof oder Routencode. Bahnhofsnamen mit <span class="interchange-hint">Punkt-Markierung</span> sind Umsteigebahnhöfe zwischen mehreren Betreibern — anklicken zeigt alle dortigen Strecken.</p>
       </div>
 
       <div class="legend" id="operatorLegend" aria-label="Betreiber-Filter"></div>
 
       <div class="table-controls">
-        <input type="search" id="routeSearch" class="search-input" data-i18n-placeholder="search_placeholder" placeholder="Bahnhof oder Routencode suchen …" aria-label="Strecken durchsuchen">
+        <input type="search" id="routeSearch" class="search-input" placeholder="Bahnhof oder Routencode suchen …" data-i18n-placeholder="search_placeholder" aria-label="Strecken durchsuchen">
         <button type="button" class="btn btn-ghost" id="exportCsvBtn" data-i18n="export_csv">&#8681; Als CSV exportieren</button>
       </div>
 
@@ -83,7 +84,7 @@
         <table class="timetable" id="routeTable">
           <thead>
             <tr>
-              <th data-sort="code" data-i18n="th_code">Code</th>
+              <th data-sort="code">Code</th>
               <th data-sort="operator" data-i18n="th_operator">Betreiber</th>
               <th data-sort="from" data-i18n="th_route">Strecke</th>
               <th data-sort="stops" class="align-right" data-i18n="th_stops">Stops</th>
