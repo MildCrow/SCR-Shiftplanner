@@ -432,8 +432,9 @@ async function setLanguage(lang) {
 function setupLanguageSwitch() {
   const el = document.getElementById("langSwitch");
   if (!el) return;
-  el.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.addEventListener("click", () => setLanguage(btn.dataset.lang));
+   
+  el.addEventListener("change", () => {
+    setLanguage(el.value);
   });
 }
 
