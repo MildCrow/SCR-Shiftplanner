@@ -137,39 +137,6 @@ h1, h2, h3{
   border-color: var(--accent);
 }
 
-.header-right{
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.lang-switch{
-  display: flex;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.lang-btn{
-  background: none;
-  border: none;
-  color: var(--parchment-dim);
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.05em;
-  padding: 5px 12px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.lang-btn:hover{ color: var(--parchment); }
-
-.lang-btn.active{
-  background: var(--accent);
-  color: #ffffff;
-}
-
 /* ============================================
    Hero
    ============================================ */
@@ -1090,4 +1057,46 @@ h1, h2, h3{
    ============================================ */
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* Language selector */
+.language-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.75rem;
+}
+.language-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--line, #d7dce2);
+  background: var(--surface, #fff);
+  color: black;
+  border-radius: 999px;
+  padding: 0.45rem 2rem 0.45rem 0.8rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.language-select:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 720px) {
+  .language-select-wrap {
+    margin-left: 0;
+  }
+  .language-select {
+    font-size: 0.8rem;
+  }
 }
