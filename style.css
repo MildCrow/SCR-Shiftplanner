@@ -1058,76 +1058,20 @@ h1, h2, h3{
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
-
-/* Language selector */
-.language-select-wrap {
-  display: inline-flex;
-  align-items: center;
-  margin-left: 0.75rem;
-}
-.language-select {
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px solid var(--line, #d7dce2);
-  background: var(--surface, #fff);
-  color: black;
-  border-radius: 999px;
-  padding: 0.45rem 2rem 0.45rem 0.8rem;
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-.language-select:focus {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-@media (max-width: 720px) {
-  .language-select-wrap {
-    margin-left: 0;
-  }
-  .language-select {
-    font-size: 0.8rem;
-  }
-}
-.language-select {
-   border: 1px solid var(--line, #d7dce2);
-   border-radius: 999px;
-   background: var(--panel, #fff);
-   color: inherit;
-   padding: .45rem .75rem;
-   font: inherit;
-   cursor: pointer;
-}
-
 .connect-filter {
-   display: flex;
-   align-items: center;
-   flex-wrap: wrap;
-   gap: .65rem;
-
-   margin: .75rem 0 1rem;
-   padding: .7rem .85rem;
-
-   border: 1px solid var(--line, #d7dce2);
-   border-radius: .75rem;
-
-   background: var(--panel, #fff);
+  display:flex; align-items:center; flex-wrap:wrap; gap:.65rem;
+  margin:.75rem 0 1rem; padding:.7rem .85rem;
+  border:1px solid var(--line,#d7dce2); border-radius:.75rem;
+  background:var(--panel,#fff);
 }
+.connect-filter label { display:inline-flex; align-items:center; gap:.35rem; cursor:pointer; }
 
-.connect-filter label {
-   display: inline-flex;
-   align-items: center;
-   gap: .35rem;
-   cursor: pointer;
+.language-select {
+  border:1px solid var(--line,#d7dce2);
+  border-radius:999px;
+  background:var(--panel,#fff);
+  color:inherit;
+  padding:.45rem .75rem;
+  font:inherit;
+  cursor:pointer;
 }
