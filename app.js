@@ -405,6 +405,7 @@ function applyStaticTranslations() {
   document.title = t("page_title");
 
   const langSelect = document.getElementById("langSwitch");
+  
   if (langSelect) {
     langSelect.value = currentLang;
   }
