@@ -404,11 +404,9 @@ function applyStaticTranslations() {
   });
   document.title = t("page_title");
 
-  const langSelect = document.getElementById("langSwitch");
-  
-  if (langSelect) {
-    langSelect.value = currentLang;
-  }
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === currentLang);
+  });
 }
 
 async function setLanguage(lang) {
@@ -420,6 +418,7 @@ async function setLanguage(lang) {
   renderStats();
   renderNetStats();
   renderOperatorLegend();
+  renderConnectTypeFilter();
   renderRouteTable();
   populateChainOperatorSelect();
   populateStartStationSelect();
@@ -434,10 +433,7 @@ async function setLanguage(lang) {
 function setupLanguageSwitch() {
   const el = document.getElementById("langSwitch");
   if (!el) return;
-
-  el.addEventListener("change", () => {
-    setLanguage(el.value);
-  });
+  el.addEventListener("change", () => setLanguage(el.value));
 }
 
 // ============================================================
@@ -603,25 +599,39 @@ let allRoutes = [];
 let sortState = { key: "operator", desc: false };
 let activeOperatorFilter = new Set(Object.keys(OPERATORS));
 let searchQuery = "";
-let stationOperators = new Map(); // Station -> Set(Betreiber-Keys), für Umsteigebahnhof-Markierung
+let stationOperators = new Map();
+
 const CONNECT_BRANCH_CODES = new Set([
-  "R020", "R022", "R037", "R038",
-  "R040", "R041", "R042", "R043",
-  "R049", "R050", "R100", "R101",
-  "R102", "R103"
+  "R020", "R022", "R037", "R038", "R040", "R041", "R042", "R043",
+  "R049", "R050", "R100", "R101", "R102", "R103"
 ]);
 
 let connectTypeFilter = "all";
 
 function connectRouteType(route) {
-  if (route.operator !== "CONNECT") {
-    return null;
-  }
-
-  return CONNECT_BRANCH_CODES.has(route.code)
-    ? "branch"
-    : "main";
+  if (route.operator !== "CONNECT") return null;
+  return CONNECT_BRANCH_CODES.has(route.code) ? "branch" : "main";
 }
+
+function renderConnectTypeFilter() {
+  const box = document.getElementById("connectTypeFilter");
+  if (!box) return;
+
+  box.innerHTML = `
+    <strong>Stepford Connect:</strong>
+    <label><input type="radio" name="connectType" value="all" ${connectTypeFilter === "all" ? "checked" : ""}> Alle Connect-Strecken</label>
+    <label><input type="radio" name="connectType" value="main" ${connectTypeFilter === "main" ? "checked" : ""}> Hauptstrecken</label>
+    <label><input type="radio" name="connectType" value="branch" ${connectTypeFilter === "branch" ? "checked" : ""}> Nebenstrecken</label>
+  `;
+
+  box.querySelectorAll('input[name="connectType"]').forEach(input => {
+    input.addEventListener("change", () => {
+      connectTypeFilter = input.value;
+      renderRouteTable();
+      renderOperatorCounts();
+    });
+  });
+} // Station -> Set(Betreiber-Keys), für Umsteigebahnhof-Markierung
 
 function computeStationOperators() {
   stationOperators = new Map();
@@ -663,13 +673,8 @@ function setCssOperatorVars() {
 function filteredRoutes() {
   const q = searchQuery.trim().toLowerCase();
   return allRoutes.filter(r => {
-    if (
-      r.operator === "CONNECT" &&
-      connectTypeFilter !== "all"
-    ) {
-      if (connectRouteType(r) !== connectTypeFilter) {
-        return false;
-      }
+    if (r.operator === "CONNECT" && connectTypeFilter !== "all") {
+      if (connectRouteType(r) !== connectTypeFilter) return false;
     }
     if (!activeOperatorFilter.has(r.operator)) return false;
     if (!q) return true;
@@ -833,59 +838,6 @@ function setupSorting() {
       renderRouteTable();
     });
   });
-}
-
-function renderConnectTypeFilter() {
-  const box = document.getElementById("connectTypeFilter");
-
-  if (!box) return;
-
-  box.innerHTML = `
-    <strong>Stepford Connect:</strong>
-
-    <label>
-      <input
-        type="radio"
-        name="connectType"
-        value="all"
-        ${connectTypeFilter === "all" ? "checked" : ""}
-      >
-      Alle Connect-Strecken
-    </label>
-
-    <label>
-      <input
-        type="radio"
-        name="connectType"
-        value="main"
-        ${connectTypeFilter === "main" ? "checked" : ""}
-      >
-      Hauptstrecken
-    </label>
-
-    <label>
-      <input
-        type="radio"
-        name="connectType"
-        value="branch"
-        ${connectTypeFilter === "branch" ? "checked" : ""}
-      >
-      Nebenstrecken
-    </label>
-  `;
-
-  box
-    .querySelectorAll('input[name="connectType"]')
-    .forEach(input => {
-
-      input.addEventListener("change", () => {
-        connectTypeFilter = input.value;
-
-        renderRouteTable();
-        renderOperatorCounts();
-      });
-
-    });
 }
 
 function renderOperatorLegend() {
@@ -1116,40 +1068,43 @@ function renderPlannerMessage(text, allowRetry) {
 function searchChain(chain, desiredCount, byFrom, usedIds, budget) {
   if (chain.length >= desiredCount) return chain;
   if (budget.calls <= 0) return chain;
+
   budget.calls--;
 
   const last = chain[chain.length - 1];
-  let candidates = shuffle([
-    ...byFrom.get(last.to) || [])
-  ]);
-  // MIt ca. 30% Wahrscheinlichkeit eine direkte Rückfahrt bevorzugen.
+  let candidates = shuffle([...(byFrom.get(last.to) || [])]);
+
+  // Zufällige direkte Rückfahrt (ca. 30 %), wenn vorhanden.
   if (chain.length > 0 && Math.random() < 0.30) {
-
     const previous = chain[chain.length - 1];
-
-    const returnCandidates = cnadidates.filter(e =>
-      e.route.id === previous.route.id &&
-      e.to === previous.from
+    const returns = candidates.filter(
+      e => e.route.id === previous.route.id && e.to === previous.from
     );
 
-    if (returnCandidates.length > 0) {
-
+    if (returns.length) {
       candidates = [
-        ...returnCandidates,
-        ...candidates.filter(
-          e => !returnCandidates.icludes(e)
-        )
+        ...returns,
+        ...candidates.filter(e => !returns.includes(e))
       ];
-    
     }
   }
-   
+
   let best = chain;
+
   for (const cand of candidates) {
-    const result = searchChain([...chain, cand], desiredCount, byFrom, usedIds, budget);
+    // Keine usedIds-Sperre: Routen dürfen mehrfach und rückwärts vorkommen.
+    const result = searchChain(
+      [...chain, cand],
+      desiredCount,
+      byFrom,
+      usedIds,
+      budget
+    );
+
     if (result.length > best.length) best = result;
     if (best.length >= desiredCount) break;
   }
+
   return best;
 }
 
@@ -1501,7 +1456,6 @@ async function init() {
   renderStats();
   renderNetStats();
   renderOperatorLegend();
-  renderConnectTypeFilter();
   renderRouteTable();
   setupSorting();
   setupSearch();
