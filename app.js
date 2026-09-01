@@ -604,6 +604,24 @@ let sortState = { key: "operator", desc: false };
 let activeOperatorFilter = new Set(Object.keys(OPERATORS));
 let searchQuery = "";
 let stationOperators = new Map(); // Station -> Set(Betreiber-Keys), für Umsteigebahnhof-Markierung
+const CONNECT_BRANCH_CODES = new Set([
+  "R020", "R022", "R037", "R038",
+  "R040", "R041", "R042", "R043",
+  "R049", "R050", "R100", "R101",
+  "R102", "R103"
+]);
+
+let connectTypeFilter = "all";
+
+function connectRouteType(route) {
+  if (route.operator !== "CONNECT") {
+    return null;
+  }
+
+  return CONNECT_BRANCH_CODES.has(route.code)
+    ? "branch"
+    : "main";
+}
 
 function computeStationOperators() {
   stationOperators = new Map();
@@ -645,6 +663,14 @@ function setCssOperatorVars() {
 function filteredRoutes() {
   const q = searchQuery.trim().toLowerCase();
   return allRoutes.filter(r => {
+    if (
+      r.operator === "CONNECT" &&
+      connectTypeFilter !== "all"
+    ) {
+      if (connectRouteType(r) !== connectTypeFilter) {
+        return false;
+      }
+    }
     if (!activeOperatorFilter.has(r.operator)) return false;
     if (!q) return true;
     return (
@@ -807,6 +833,59 @@ function setupSorting() {
       renderRouteTable();
     });
   });
+}
+
+function renderConnectTypeFilter() {
+  const box = document.getElementById("connectTypeFilter");
+
+  if (!box) return;
+
+  box.innerHTML = `
+    <strong>Stepford Connect:</strong>
+
+    <label>
+      <input
+        type="radio"
+        name="connectType"
+        value="all"
+        ${connectTypeFilter === "all" ? "checked" : ""}
+      >
+      Alle Connect-Strecken
+    </label>
+
+    <label>
+      <input
+        type="radio"
+        name="connectType"
+        value="main"
+        ${connectTypeFilter === "main" ? "checked" : ""}
+      >
+      Hauptstrecken
+    </label>
+
+    <label>
+      <input
+        type="radio"
+        name="connectType"
+        value="branch"
+        ${connectTypeFilter === "branch" ? "checked" : ""}
+      >
+      Nebenstrecken
+    </label>
+  `;
+
+  box
+    .querySelectorAll('input[name="connectType"]')
+    .forEach(input => {
+
+      input.addEventListener("change", () => {
+        connectTypeFilter = input.value;
+
+        renderRouteTable();
+        renderOperatorCounts();
+      });
+
+    });
 }
 
 function renderOperatorLegend() {
@@ -1040,13 +1119,34 @@ function searchChain(chain, desiredCount, byFrom, usedIds, budget) {
   budget.calls--;
 
   const last = chain[chain.length - 1];
-  const candidates = shuffle((byFrom.get(last.to) || []).filter(e => !usedIds.has(e.route.id)));
+  let candidates = shuffle([
+    ...byFrom.get(last.to) || [])
+  ]);
+  // MIt ca. 30% Wahrscheinlichkeit eine direkte Rückfahrt bevorzugen.
+  if (chain.length > 0 && Math.random() < 0.30) {
 
+    const previous = chain[chain.length - 1];
+
+    const returnCandidates = cnadidates.filter(e =>
+      e.route.id === previous.route.id &&
+      e.to === previous.from
+    );
+
+    if (returnCandidates.length > 0) {
+
+      candidates = [
+        ...returnCandidates,
+        ...candidates.filter(
+          e => !returnCandidates.icludes(e)
+        )
+      ];
+    
+    }
+  }
+   
   let best = chain;
   for (const cand of candidates) {
-    usedIds.add(cand.route.id);
     const result = searchChain([...chain, cand], desiredCount, byFrom, usedIds, budget);
-    usedIds.delete(cand.route.id);
     if (result.length > best.length) best = result;
     if (best.length >= desiredCount) break;
   }
@@ -1401,6 +1501,7 @@ async function init() {
   renderStats();
   renderNetStats();
   renderOperatorLegend();
+  renderConnectTypeFilter();
   renderRouteTable();
   setupSorting();
   setupSearch();
