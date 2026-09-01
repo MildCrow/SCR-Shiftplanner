@@ -433,7 +433,7 @@ async function setLanguage(lang) {
 function setupLanguageSwitch() {
   const el = document.getElementById("langSwitch");
   if (!el) return;
-   
+
   el.addEventListener("change", () => {
     setLanguage(el.value);
   });
