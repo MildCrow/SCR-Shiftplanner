@@ -1100,3 +1100,34 @@ h1, h2, h3{
     font-size: 0.8rem;
   }
 }
+.language-select {
+   border: 1px solid var(--line, #d7dce2);
+   border-radius: 999px;
+   background: var(--panel, #fff);
+   color: inherit;
+   padding: .45rem .75rem;
+   font: inherit;
+   cursor: pointer;
+}
+
+.connect-filter {
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
+   gap: .65rem;
+
+   margin: .75rem 0 1rem;
+   padding: .7rem .85rem;
+
+   border: 1px solid var(--line, #d7dce2);
+   border-radius: .75rem;
+
+   background: var(--panel, #fff);
+}
+
+.connect-filter label {
+   display: inline-flex;
+   align-items: center;
+   gap: .35rem;
+   cursor: pointer;
+}
